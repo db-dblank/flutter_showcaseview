@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 
 import 'get_position.dart';
 import 'measure_size.dart';
+import 'showcase.dart';
 
 class ToolTipWidget extends StatefulWidget {
   final GetPosition? position;
@@ -37,6 +38,7 @@ class ToolTipWidget extends StatefulWidget {
   final TextStyle? titleTextStyle;
   final TextStyle? descTextStyle;
   final Widget? container;
+  final ContainerBuilder? containerBuilder;
   final Color? tooltipColor;
   final Color? textColor;
   final bool? showArrow;
@@ -56,6 +58,7 @@ class ToolTipWidget extends StatefulWidget {
       this.titleTextStyle,
       this.descTextStyle,
       this.container,
+      this.containerBuilder,
       this.tooltipColor,
       this.textColor,
       this.showArrow,
@@ -193,7 +196,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
       paddingBottom = 10;
     }
 
-    if (widget.container == null) {
+    if (widget.container == null && widget.containerBuilder == null) {
       return Stack(
         children: <Widget>[
           widget.showArrow! ? _getArrow(contentOffsetMultiplier) : Container(),
@@ -266,7 +269,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
           )
         ],
       );
-    } else {
+    } else if (widget.container != null) {
       return Stack(
         children: <Widget>[
           Positioned(
@@ -310,6 +313,15 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
           ),
         ],
       );
+    } else {
+      return widget.containerBuilder!.call(ContainerBuilderData(
+        contentY: contentY,
+        contentFractionalOffset: contentFractionalOffset,
+        animationOffset: widget.animationOffset!,
+        paddingTop: paddingTop,
+        showArrow: widget.showArrow!,
+        isArrowUp: ToolTipWidget.isArrowUp,
+      ));
     }
   }
 

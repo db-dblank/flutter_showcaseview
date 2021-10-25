@@ -45,6 +45,7 @@ class Showcase extends StatefulWidget {
   final Color overlayColor;
   final double overlayOpacity;
   final Widget? container;
+  final ContainerBuilder? containerBuilder;
   final Color showcaseBackgroundColor;
   final Color textColor;
   final bool showArrow;
@@ -81,6 +82,7 @@ class Showcase extends StatefulWidget {
       : height = null,
         width = null,
         container = null,
+        containerBuilder = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
             "overlay opacity should be >= 0.0 and <= 1.0."),
         assert(
@@ -98,6 +100,7 @@ class Showcase extends StatefulWidget {
     this.key,
     required this.child,
     required this.container,
+    required this.containerBuilder,
     required this.height,
     required this.width,
     this.title,
@@ -230,8 +233,10 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
     if (widget.disposeOnTap == true) {
       ShowCaseWidget.of(context)!.dismiss();
       widget.onTargetClick!();
-    } else {
-      (widget.onTargetClick ?? _nextIfAny).call();
+    } else if (widget.onTargetClick != null) {
+      widget.onTargetClick!.call();
+    } else if (!(ShowCaseWidget.of(context)!.disableBarrierInteraction)) {
+      _nextIfAny();
     }
   }
 
@@ -255,7 +260,11 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
         child: Stack(
           children: [
             GestureDetector(
-              onTap: _nextIfAny,
+              onTap: () {
+                if (!(ShowCaseWidget.of(context)!.disableBarrierInteraction)) {
+                  _nextIfAny();
+                }
+              },
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -284,6 +293,7 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
               titleTextStyle: widget.titleTextStyle,
               descTextStyle: widget.descTextStyle,
               container: widget.container,
+              containerBuilder: widget.containerBuilder,
               tooltipColor: widget.showcaseBackgroundColor,
               textColor: widget.textColor,
               showArrow: widget.showArrow,
@@ -296,6 +306,26 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
         ),
       );
 }
+
+class ContainerBuilderData {
+  final double contentY;
+  final num contentFractionalOffset;
+  final Animation<double> animationOffset;
+  final double paddingTop;
+  final bool showArrow;
+  final bool isArrowUp;
+
+  ContainerBuilderData({
+    required this.contentY,
+    required this.contentFractionalOffset,
+    required this.animationOffset,
+    required this.paddingTop,
+    required this.showArrow,
+    required this.isArrowUp,
+  });
+}
+
+typedef ContainerBuilder = Widget Function(ContainerBuilderData data);
 
 class _TargetWidget extends StatelessWidget {
   final Offset offset;

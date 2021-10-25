@@ -309,6 +309,7 @@ class _MailPageState extends State<MailPage> {
                         height: 50,
                         width: 140,
                         shapeBorder: CircleBorder(),
+                        containerBuilder: null,
                         container: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
