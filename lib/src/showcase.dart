@@ -54,6 +54,7 @@ class Showcase extends StatefulWidget {
   final Duration animationDuration;
   final VoidCallback? onToolTipClick;
   final VoidCallback? onTargetClick;
+  final VoidCallback? onNext;
   final bool? disposeOnTap;
   final bool disableAnimation;
   final EdgeInsets overlayPadding;
@@ -72,6 +73,7 @@ class Showcase extends StatefulWidget {
       this.textColor = Colors.black,
       this.showArrow = true,
       this.onTargetClick,
+      this.onNext,
       this.disposeOnTap,
       this.animationDuration = const Duration(milliseconds: 2000),
       this.disableAnimation = false,
@@ -113,6 +115,7 @@ class Showcase extends StatefulWidget {
     this.showcaseBackgroundColor = Colors.white,
     this.textColor = Colors.black,
     this.onTargetClick,
+    this.onNext,
     this.disposeOnTap,
     this.animationDuration = const Duration(milliseconds: 2000),
     this.disableAnimation = false,
@@ -215,6 +218,10 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
   }
 
   void _nextIfAny() {
+    if (widget.onNext != null) {
+      widget.onNext!();
+      return;
+    }
     if (timer != null && timer!.isActive) {
       if (ShowCaseWidget.of(context)!.autoPlayLockEnable) {
         return;
