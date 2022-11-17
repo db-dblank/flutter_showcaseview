@@ -240,10 +240,8 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
     if (widget.disposeOnTap == true) {
       ShowCaseWidget.of(context)!.dismiss();
       widget.onTargetClick!();
-    } else if (widget.onTargetClick != null) {
-      widget.onTargetClick!.call();
-    } else if (!(ShowCaseWidget.of(context)!.disableBarrierInteraction)) {
-      _nextIfAny();
+    } else {
+      (widget.onTargetClick ?? _nextIfAny).call();
     }
   }
 
@@ -267,11 +265,7 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
         child: Stack(
           children: [
             GestureDetector(
-              onTap: () {
-                if (!(ShowCaseWidget.of(context)!.disableBarrierInteraction)) {
-                  _nextIfAny();
-                }
-              },
+              onTap: _nextIfAny,
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
