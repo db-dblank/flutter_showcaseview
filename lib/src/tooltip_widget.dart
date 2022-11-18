@@ -461,7 +461,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget>
           ),
         ),
       );
-    } else if (widget.container == null) {
+    } else if (widget.container != null) {
       return Stack(
         children: <Widget>[
           Positioned(
